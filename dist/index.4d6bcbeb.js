@@ -575,56 +575,69 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 
 },{}],"gLLPy":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+var _heropy = require("./core/heropy");
 var _app = require("./App");
 var _appDefault = parcelHelpers.interopDefault(_app);
+var _index = require("./routes/index");
+var _indexDefault = parcelHelpers.interopDefault(_index);
 const root = document.querySelector("#root");
 root.append(new (0, _appDefault.default)().el);
+(0, _indexDefault.default)();
 
-},{"./App":"2kQhy","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2kQhy":[function(require,module,exports) {
+},{"./App":"2kQhy","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./routes/index":"3L9mC","./core/heropy":"57bZf"}],"2kQhy":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _heropy = require("./core/heropy");
-var _fruitsItem = require("./components/FruitsItem");
-var _fruitsItemDefault = parcelHelpers.interopDefault(_fruitsItem);
+var _theHeader = require("./components/TheHeader");
+var _theHeaderDefault = parcelHelpers.interopDefault(_theHeader);
 class App extends (0, _heropy.Component) {
-    constructor(){
-        super({
-            state: {
-                fruits: [
-                    {
-                        name: "Apple",
-                        price: 1000
-                    },
-                    {
-                        name: "Banana",
-                        price: 2000
-                    },
-                    {
-                        name: "Cherry",
-                        price: 3000
-                    }
-                ]
-            }
-        });
-    }
     render() {
-        this.el.innerHTML = /* html */ `
-            <h1>Fruits</h1>
-            <ul>
-            </ul>
-        `;
-        const ulEl = this.el.querySelector("ul");
-        ulEl.append(...this.state.fruits.map((fruit)=>new (0, _fruitsItemDefault.default)({
-                props: {
-                    name: fruit.name,
-                    price: fruit.price
-                }
-            }).el));
+        const routerView = document.createElement("router-view");
+        this.el.append(new (0, _theHeaderDefault.default)().el, routerView);
     }
 }
 exports.default = App;
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./core/heropy":"57bZf","./components/FruitsItem":"44sJG"}],"gkKU3":[function(require,module,exports) {
+},{"./core/heropy":"57bZf","./components/TheHeader":"3Cyq4","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"57bZf":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "Component", ()=>Component);
+parcelHelpers.export(exports, "createRouter", ()=>createRouter);
+class Component {
+    constructor(payload = {}){
+        const { tagName = "div", state = {}, props = {} } = payload;
+        this.el = document.createElement(tagName);
+        this.state = state;
+        this.props = props;
+        this.render();
+    }
+    render() {}
+}
+function routeRender(routes) {
+    if (!location.hash) history.replaceState(null, "", "/#/");
+    const routerView = document.querySelector("router-view");
+    const [hash, queryString = ""] = location.hash.split("?");
+    const query = queryString.split("&").reduce((acc, cur)=>{
+        const [key, value] = cur.split("=");
+        acc[key] = value;
+        return acc;
+    }, {});
+    history.replaceState(query, "");
+    const currentRoute = routes.find((route)=>new RegExp(`${route.path}/?$`).test(hash));
+    routerView.innerHTML = "";
+    routerView.append(new currentRoute.component().el);
+    window.scrollTo(0, 0);
+}
+function createRouter(routes) {
+    return function() {
+        window.addEventListener("popstate", ()=>{
+            routeRender(routes);
+        });
+        routeRender(routes);
+    };
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports) {
 exports.interopDefault = function(a) {
     return a && a.__esModule ? a : {
         default: a
@@ -654,43 +667,73 @@ exports.export = function(dest, destName, get) {
     });
 };
 
-},{}],"57bZf":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "Component", ()=>Component);
-class Component {
-    constructor(payload = {}){
-        const { tagName = "div", state = {}, props = {} } = payload;
-        this.el = document.createElement(tagName);
-        this.state = state;
-        this.props = props;
-        this.render();
-    }
-    render() {}
-}
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"44sJG":[function(require,module,exports) {
+},{}],"3Cyq4":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _heropy = require("../core/heropy");
-class FruitsItem extends (0, _heropy.Component) {
-    constructor(payload){
+class TheHeader extends (0, _heropy.Component) {
+    constructor(){
         super({
-            tagName: "li",
-            props: payload.props
+            tagName: "header"
         });
     }
     render() {
         this.el.innerHTML = /* html */ `
-            <span>${this.props.name}</span>
-            <span>${this.props.price}</span>
+            <a href="#/">Main!</a>
+            <a href="#/about">About!</a>
         `;
-        this.el.addEventListener("click", ()=>{
-            console.log(this.props.name, this.props.price);
-        });
     }
 }
-exports.default = FruitsItem;
+exports.default = TheHeader;
+
+},{"../core/heropy":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3L9mC":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _heropy = require("../core/heropy");
+var _home = require("./Home");
+var _homeDefault = parcelHelpers.interopDefault(_home);
+var _about = require("./About");
+var _aboutDefault = parcelHelpers.interopDefault(_about);
+exports.default = (0, _heropy.createRouter)([
+    {
+        path: "#/",
+        component: (0, _homeDefault.default)
+    },
+    {
+        path: "#/about",
+        component: (0, _aboutDefault.default)
+    }
+]);
+
+},{"./Home":"0JSNG","./About":"gdB30","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../core/heropy":"57bZf"}],"0JSNG":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _heropy = require("../core/heropy");
+class Home extends (0, _heropy.Component) {
+    render() {
+        this.el.innerHTML = /* html */ `
+            <h1>Home Page!</h1>
+        `;
+    }
+}
+exports.default = Home;
+
+},{"../core/heropy":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gdB30":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _heropy = require("../core/heropy");
+class About extends (0, _heropy.Component) {
+    render() {
+        const { a, b, c } = history.state;
+        this.el.innerHTML = /* html */ `
+            <h1>About Page!</h1>
+            <h2>${a}</h2>
+            <h2>${b}</h2>
+            <h2>${c}</h2>
+        `;
+    }
+}
+exports.default = About;
 
 },{"../core/heropy":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["f3BSW","gLLPy"], "gLLPy", "parcelRequire8c02")
 
