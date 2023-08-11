@@ -588,11 +588,25 @@ var _heropy = require("./core/heropy");
 class App extends (0, _heropy.Component) {
     constructor(){
         super({
-            tagName: "h1"
+            state: {
+                inputText: ""
+            }
         });
     }
     render() {
-        this.el.textContent = "Hello, world!";
+        this.el.classList.add("search");
+        this.el.innerHTML = /* html */ `
+            <input />
+            <button>Click!</button>
+        `;
+        const inputEl = this.el.querySelector("input");
+        inputEl.addEventListener("input", ()=>{
+            this.state.inputText = inputEl.value;
+        });
+        const buttonEl = this.el.querySelector("button");
+        buttonEl.addEventListener("click", ()=>{
+            console.log(this.state.inputText);
+        });
     }
 }
 exports.default = App;
@@ -633,8 +647,9 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "Component", ()=>Component);
 class Component {
     constructor(payload = {}){
-        const { tagName = "div" } = payload;
+        const { tagName = "div", state = {} } = payload;
         this.el = document.createElement(tagName);
+        this.state = state;
         this.render();
     }
     render() {}
