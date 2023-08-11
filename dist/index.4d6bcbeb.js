@@ -575,43 +575,56 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 
 },{}],"gLLPy":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-var _heropy = require("./core/heropy");
 var _app = require("./App");
 var _appDefault = parcelHelpers.interopDefault(_app);
 const root = document.querySelector("#root");
 root.append(new (0, _appDefault.default)().el);
 
-},{"./App":"2kQhy","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./core/heropy":"57bZf"}],"2kQhy":[function(require,module,exports) {
+},{"./App":"2kQhy","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2kQhy":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _heropy = require("./core/heropy");
+var _fruitsItem = require("./components/FruitsItem");
+var _fruitsItemDefault = parcelHelpers.interopDefault(_fruitsItem);
 class App extends (0, _heropy.Component) {
     constructor(){
         super({
             state: {
-                inputText: ""
+                fruits: [
+                    {
+                        name: "Apple",
+                        price: 1000
+                    },
+                    {
+                        name: "Banana",
+                        price: 2000
+                    },
+                    {
+                        name: "Cherry",
+                        price: 3000
+                    }
+                ]
             }
         });
     }
     render() {
-        this.el.classList.add("search");
         this.el.innerHTML = /* html */ `
-            <input />
-            <button>Click!</button>
+            <h1>Fruits</h1>
+            <ul>
+            </ul>
         `;
-        const inputEl = this.el.querySelector("input");
-        inputEl.addEventListener("input", ()=>{
-            this.state.inputText = inputEl.value;
-        });
-        const buttonEl = this.el.querySelector("button");
-        buttonEl.addEventListener("click", ()=>{
-            console.log(this.state.inputText);
-        });
+        const ulEl = this.el.querySelector("ul");
+        ulEl.append(...this.state.fruits.map((fruit)=>new (0, _fruitsItemDefault.default)({
+                props: {
+                    name: fruit.name,
+                    price: fruit.price
+                }
+            }).el));
     }
 }
 exports.default = App;
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./core/heropy":"57bZf"}],"gkKU3":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./core/heropy":"57bZf","./components/FruitsItem":"44sJG"}],"gkKU3":[function(require,module,exports) {
 exports.interopDefault = function(a) {
     return a && a.__esModule ? a : {
         default: a
@@ -647,14 +660,38 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "Component", ()=>Component);
 class Component {
     constructor(payload = {}){
-        const { tagName = "div", state = {} } = payload;
+        const { tagName = "div", state = {}, props = {} } = payload;
         this.el = document.createElement(tagName);
         this.state = state;
+        this.props = props;
         this.render();
     }
     render() {}
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["f3BSW","gLLPy"], "gLLPy", "parcelRequire8c02")
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"44sJG":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _heropy = require("../core/heropy");
+class FruitsItem extends (0, _heropy.Component) {
+    constructor(payload){
+        super({
+            tagName: "li",
+            props: payload.props
+        });
+    }
+    render() {
+        this.el.innerHTML = /* html */ `
+            <span>${this.props.name}</span>
+            <span>${this.props.price}</span>
+        `;
+        this.el.addEventListener("click", ()=>{
+            console.log(this.props.name, this.props.price);
+        });
+    }
+}
+exports.default = FruitsItem;
+
+},{"../core/heropy":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["f3BSW","gLLPy"], "gLLPy", "parcelRequire8c02")
 
 //# sourceMappingURL=index.4d6bcbeb.js.map

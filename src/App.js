@@ -1,28 +1,36 @@
 import { Component } from './core/heropy';
+import FruitsItem from './components/FruitsItem';
 
 export default class App extends Component {
     constructor() {
         super({
             state: {
-                inputText: '',
+                fruits: [
+                    { name: 'Apple', price: 1000 },
+                    { name: 'Banana', price: 2000 },
+                    { name: 'Cherry', price: 3000 },
+                ],
             },
         });
     }
     render() {
-        this.el.classList.add('search');
         this.el.innerHTML = /* html */ `
-            <input />
-            <button>Click!</button>
+            <h1>Fruits</h1>
+            <ul>
+            </ul>
         `;
 
-        const inputEl = this.el.querySelector('input');
-        inputEl.addEventListener('input', () => {
-            this.state.inputText = inputEl.value;
-        });
-
-        const buttonEl = this.el.querySelector('button');
-        buttonEl.addEventListener('click', () => {
-            console.log(this.state.inputText);
-        });
+        const ulEl = this.el.querySelector('ul');
+        ulEl.append(
+            ...this.state.fruits.map(
+                (fruit) =>
+                    new FruitsItem({
+                        props: {
+                            name: fruit.name,
+                            price: fruit.price,
+                        },
+                    }).el
+            )
+        );
     }
 }
