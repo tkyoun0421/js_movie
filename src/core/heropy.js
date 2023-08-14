@@ -53,12 +53,14 @@ export class Store {
                 get: () => state[key],
                 set: (val) => {
                     state[key] = val;
-                    this.observers[key]();
+                    this.observers[key].forEach((observer) => observer(val));
                 },
             });
         }
     }
     subscribe(key, cb) {
-        this.observers[key] = cb;
+        Array.isArray(this.observers[key])
+            ? this.observers[key].push(cb)
+            : (this.observers[key] = [cb]);
     }
 }
